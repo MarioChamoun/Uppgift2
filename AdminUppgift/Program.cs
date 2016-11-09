@@ -24,7 +24,7 @@ namespace AdminUppgift
                     int val = int.Parse(Console.ReadLine());
                     if (val == 1) { classval.createcustomer(); }
                     else if (val == 2) { classval.createproduct(); }
-                    else if (val == 3) { classval.updateprice(); }
+                    else if (val == 3) { Console.WriteLine(classval.updateprice()); }
                 }
                 catch (Exception ex)
                 {
