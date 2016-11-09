@@ -19,39 +19,44 @@ namespace AdminUppgift
             string country;
             string postcode;
             string customerid;
-
-            Console.Write("Skriv in namn på kunden: ");
-            contactname = Console.ReadLine();
-            Console.Write("Skriv in företagsnamn: ");
-            companyname = Console.ReadLine();
-            Console.Write("Skriv in kundens adress: ");
-            adress = Console.ReadLine();
-            Console.Write("Skriv in vilket land kunden bor i: ");
-            country = Console.ReadLine();
-            Console.Write("Skriv in kundens postnummer: ");
-            postcode = Console.ReadLine();
-            Console.Write("Skriv customerID(Max 5 bokstäver): ");
-            customerid = Console.ReadLine();
-
-            using (SqlConnection con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=NORTHWND;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True"))
+            try
             {
+                Console.Write("Skriv in namn på kunden: ");
+                contactname = Console.ReadLine();
+                Console.Write("Skriv in företagsnamn: ");
+                companyname = Console.ReadLine();
+                Console.Write("Skriv in kundens adress: ");
+                adress = Console.ReadLine();
+                Console.Write("Skriv in vilket land kunden bor i: ");
+                country = Console.ReadLine();
+                Console.Write("Skriv in kundens postnummer: ");
+                postcode = Console.ReadLine();
+                Console.Write("Skriv customerID(Max 5 bokstäver): ");
+                customerid = Console.ReadLine();
 
-                SqlCommand cmd = new SqlCommand("dbo.InsertCustomer", con);
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@CustomerID", customerid);
-                cmd.Parameters.AddWithValue("@CompanyName", companyname);
-                cmd.Parameters.AddWithValue("@ContactName", contactname);
-                cmd.Parameters.AddWithValue("@ContactTitle", "");
-                cmd.Parameters.AddWithValue("@Address", adress);
-                cmd.Parameters.AddWithValue("@Region", "");
-                cmd.Parameters.AddWithValue("@City", "");
-                cmd.Parameters.AddWithValue("@PostalCode", postcode);
-                cmd.Parameters.AddWithValue("@Country", country);
-                cmd.Parameters.AddWithValue("@Phone", "");
-                cmd.Parameters.AddWithValue("@Fax", "");
+                using (SqlConnection con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=NORTHWND;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True"))
+                {
 
-                con.Open();
-                cmd.ExecuteNonQuery();
+                    SqlCommand cmd = new SqlCommand("dbo.InsertCustomer", con);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CustomerID", customerid);
+                    cmd.Parameters.AddWithValue("@CompanyName", companyname);
+                    cmd.Parameters.AddWithValue("@ContactName", contactname);
+                    cmd.Parameters.AddWithValue("@ContactTitle", "");
+                    cmd.Parameters.AddWithValue("@Address", adress);
+                    cmd.Parameters.AddWithValue("@Region", "");
+                    cmd.Parameters.AddWithValue("@City", "");
+                    cmd.Parameters.AddWithValue("@PostalCode", postcode);
+                    cmd.Parameters.AddWithValue("@Country", country);
+                    cmd.Parameters.AddWithValue("@Phone", "");
+                    cmd.Parameters.AddWithValue("@Fax", "");
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            } catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             Console.WriteLine("Kunden har registrerats i databasen.");
@@ -115,6 +120,8 @@ namespace AdminUppgift
             Console.Clear();
             int ID;
             decimal nyapris;
+            string namn;
+            string pris;
 
             using (SqlConnection con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=NORTHWND;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True"))
             {
@@ -123,9 +130,16 @@ namespace AdminUppgift
                 Console.WriteLine("Skriv produktens ID som du vill uppdatera pris på: ");
                 ID = int.Parse(Console.ReadLine());
 
-                SqlCommand command = new SqlCommand("SELECT ProductName FROM Products WHERE ProductID =" + ID, con);
-                string namn = (string)command.ExecuteScalar();
-                Console.WriteLine("Du har valt att uppdatera priset på: " + namn);
+                SqlCommand command = new SqlCommand("SELECT ProductName,UnitPrice FROM Products WHERE ProductID =" + ID, con);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    reader.Read();
+                    namn = reader.GetString(0);
+                    pris = reader.GetDecimal(1).ToString("C2");
+                }
+
+                Console.WriteLine("Du har valt att uppdatera priset på: " + namn + ", nuvarande priset är: " + pris);
 
                 Console.Write("Skriv produktens nya pris: ");
                 nyapris = decimal.Parse(Console.ReadLine());
@@ -137,7 +151,7 @@ namespace AdminUppgift
 
                 cmd.ExecuteNonQuery();
 
-                return "Priset på " + namn + " har uppdaterats till " + nyapris;
+                return "Priset på " + namn + " har uppdaterats till " + nyapris + " Kr";
 
             }
         }

@@ -12,7 +12,7 @@ namespace AdminUppgift
         static void Main(string[] args)
         {
             bool again = true;
-            while (again == true)
+            while (again)
             {
                 userval classval = new userval();
                 Console.WriteLine("Välj ett nummer: ");
