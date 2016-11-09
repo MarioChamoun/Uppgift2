@@ -7,7 +7,7 @@ BEGIN
 	declare @oldname nvarchar(50)
 	declare @name nvarchar(50)
 	
-	select top 1 @id = CustomerID, @name = ContactName from inserted
+	select @id = CustomerID, @name = ContactName from inserted
 
 	select @oldname = ContactName from deleted where CustomerID = @id
 
