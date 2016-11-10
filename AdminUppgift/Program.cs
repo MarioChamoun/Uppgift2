@@ -32,6 +32,10 @@ namespace AdminUppgift
                     Console.WriteLine(ex.Message);
                     
                 }
+                Console.WriteLine("Vill du köra programmet igen? Y/N");
+                string koraigen = Console.ReadLine();
+                if(koraigen == "Y" || koraigen == "y") { again = true; Console.Clear(); continue; }
+                else { Environment.Exit(0);   }
                 Console.ReadLine();
             }
         }
